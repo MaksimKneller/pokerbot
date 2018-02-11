@@ -5,10 +5,14 @@ class Card:
         self.suit = suit
 
     def __le__(self, other):
+        return self.rank <= other.rank
+
+    def __lt__(self,other):
         return self.rank < other.rank
 
-    def __gt__(self, other):
-        return self.rank > other.rank
+
+    def __ge__(self, other):
+        return self.rank >= other.rank
 
     def __eq__(self, other):
         return self.rank == other.rank

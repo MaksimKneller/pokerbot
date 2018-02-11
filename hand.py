@@ -71,7 +71,7 @@ class Hand:
         typeToNum = {"STRAIGHTFLUSH":9,"QUADS":8,"FULLHOUSE":7,"FLUSH":6,"STRAIGHT":5,"TRIPS":4,"TWOPAIR":3,"PAIR":2,"HIGH":1}
 
         res = 0
-        print(typeToNum[self.handType],typeToNum[other.handType])
+        #print(typeToNum[self.handType],typeToNum[other.handType])
         if (typeToNum[self.handType] > typeToNum[other.handType]): res = 1
         if (typeToNum[self.handType] < typeToNum[other.handType]): res = -1
         if(res != 0): return res
@@ -119,7 +119,7 @@ class Hand:
             otherKicker.sort(reverse=True)
             otherDupes.extend(otherKicker)
 
-            print(selfDupes, otherDupes)
+            #print(selfDupes, otherDupes)
             if selfDupes < otherDupes: res = -1
             elif selfDupes > otherDupes: res = 1
 

@@ -4,7 +4,7 @@ from random import shuffle
 class Deck:
 
     def __init__(self):
-        values = [x for x in range(2,14)]
+        values = [x for x in range(2,15)]
         suits = "d c h s".split()
 
         self.deck_of_cards = [ Card(v,s) for v in values for s in suits ]

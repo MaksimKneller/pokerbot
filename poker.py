@@ -1,5 +1,9 @@
 from hand import *
 from deck import *
+from player import *
+from tqdm import tqdm
+
+from itertools import combinations
 
 def getHoleCards():
     return d.takeCards(2)
@@ -14,25 +18,95 @@ def getRiverCard():
     return d.takeCards(1)
 
 
+def findBestHand(possibleHands):
+
+    hand = Hand(list(possibleHands.pop()))
+
+    if(len(possibleHands) == 0):
+        return hand
+
+    hand2 = findBestHand(possibleHands)
+    res = hand.compare(hand2)
+
+    if res == -1:
+        return hand2
+    elif res == 1 or res == 0:
+        return hand
+
+
+def findWinningPlayers(players):
+
+    winningPlayers = []
+
+    # find one of the highest hands
+    bestPlayer = players[0]
+
+    for player in players:
+        if player.hand.compare(bestPlayer.hand) == 1:
+            bestPlayer = player
+
+
+    # find if anyone eles tied with the best hand
+    for player in players:
+
+        if player.name == bestPlayer.name: continue
+
+        if player.hand.compare(bestPlayer.hand) == 0:
+            winningPlayers.append(player)
+
+
+    winningPlayers.append(bestPlayer)
+
+    return winningPlayers
+
+
+
+
 
 if (__name__ == '__main__'):
 
-    d = Deck()
+    __DEBUG__ = False
 
-    holeCards = getHoleCards()
-    flopCards = getFlopCards()
-    turnCard = getTurnCard()
-    riverCard = getRiverCard()
+    allPlayers = [
+        Player("Batman"),
+        Player("Spiderman"),
+        Player("TheFlash"),
+        Player("Superman"),
+        Player("Aquaman"),
+        Player("Wolverine"),
+        Player("Storm"),
+        Player("Arnold"),
+        Player("SpongeBob") ]
 
-    hand1 = Hand(d.takeCards(5))
-    hand2 = Hand(d.takeCards(5))
 
-    #hand1 = Hand([Card(2,'d'),Card(5,'h'),Card(6,'d'),Card(7,'c'),Card(9,'c')])
-    #hand2 = Hand([Card(4,'c'),Card(10,'d'),Card(10,'h'),Card(3,'h'),Card(10,'s')])
+    for x in tqdm(range(100000)):
 
-    res = hand1.compare(hand2)
+        playersInGame = []
 
-    print(str(hand1.cards), hand1.handType)
-    print(str(hand2.cards), hand2.handType)
+        d = Deck()
 
-    print(res)
+        flopCards = getFlopCards()
+        turnCard = getTurnCard()
+        riverCard = getRiverCard()
+
+        for player in allPlayers:
+            holeCards = getHoleCards()
+
+            if(player.name == "Batman"):
+                if (holeCards[0].rank != 14 or holeCards[1].rank != 14): continue
+
+            player.setHand(findBestHand([h for h in combinations(holeCards + flopCards + turnCard + riverCard, 5)]))
+            player.games +=1
+            playersInGame.append(player)
+
+
+        winningPlayers = findWinningPlayers(playersInGame)
+
+
+        if(len(winningPlayers) == 1):
+            winningPlayers[0].wins += 1
+
+
+
+    for player in allPlayers:
+        tqdm.write("{0:<10} WinRate: {1:>5.3}%".format(player.name, player.getWinRate()))
